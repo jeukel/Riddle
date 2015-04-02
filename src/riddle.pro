@@ -15,20 +15,9 @@ invertir([],L1,L1).
 invertir([L|C],Temp,Res):- invertir(C , [L|Temp], Res).
 
 
-
-/*resolver(x):-generar(x),probar(x).*/
-
-resolver([] , _ , _ ):- fail. %Si le pasa una figura vacía,falla.
-resolver(M1, [], Sol):- M1 == Sol.%Si la lista de piezas está vacía, falla.
-resolver(M1 , LMs , Sol):- generar(LMs,Sol), resolver(M1 ,LMs,Sol).
-
-/* Hay que ir armando una lista de piezas*/
-/* El metodo principal tiene que recibir una  matriz y una lista de matrices*/
-
 notImplies(X1,X2,R):- (X1==x,X2==x,R = 0);(X1==0,X2==0,R = 0);
 	 (X1==x,X2==0,R = x); (X1==0,X2==x,R = 0).
 	 
-
 elimColumn(M1,Mres):- rait(M1,[],Res), invertir(Res,[],Mres).
 rait([],M,M).
 rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res). 
@@ -52,4 +41,5 @@ compRows([Lm|LmX],[Lp|LpX]) :- compElem(Lm,Lp), compRows(LmX,LpX).
 compMatrix([],[]).
 compMatrix([Lm|LmX],[Lp|LpX]) :- compRows([Lm|LmX],[Lp|LpX]); compMatrix(LmX,[Lp|LpX]).  
 
-compPiece([Lm|LmX],[Lp|LpX],Nm) :- compMatrix([Lm|LmX],[Lp|LpX]); elimColumn([Lm|LmX],R); compPiece(R,[Lp|LpX],Nm).
+
+compPiece([Lm|LmX],[Lp|LpX],Nm) :- compMatrix([Lm|LmX],[Lp|LpX]); elimColumn([Lm|LmX],R), compPiece(R,[Lp|LpX],Nm).
