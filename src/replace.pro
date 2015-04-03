@@ -19,10 +19,6 @@ compPiece([Lm|LmX],[Lp|LpX],Nm) :- compMatrix([Lm|LmX],[Lp|LpX]); elimColumn([Lm
 
 %-----------------------------------------------------------------------------
 
-%Recursive function for comparing pieces
-piecesManager(_,[]).
-piecesManager(Or, [Pc|Pcs]) :- compMatrix(Or, Pc), piecesManager(Or, Pcs).
-
 %Function for getting props of pieces
 getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
 getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
@@ -32,6 +28,12 @@ pieceS([],X,X).
 pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %Do
-%figures(Or, [Lp|LpX], Z) :- getProps(Lp,Z), pieceS(LpX,Z), piecesManager(Or,B).
-figures([],X,X).
-figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,T),figures([],T,Z).
+%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
+
+%--------------------------------------------------------------------------------
+
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B).
+
+%Recursive function for comparing pieces
+piecesManager(_,[]).
+piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
