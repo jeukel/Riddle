@@ -15,8 +15,8 @@ invertir([],L1,L1).
 invertir([L|C],Temp,Res):- invertir(C , [L|Temp], Res).
 
 
-notImplies(X1,X2,R):- (X1==x,X2==x,R = 0);(X1==0,X2==0,R = 0);
-	 (X1==x,X2==0,R = x); (X1==0,X2==x,R = 0).
+notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
+	 (X1==x,X2==o,R = x); (X1==o,X2==x,R = o).
 	 
 elimColumn(M1,Mres):- rait(M1,[],Res), invertir(Res,[],Mres).
 rait([],M,M).
