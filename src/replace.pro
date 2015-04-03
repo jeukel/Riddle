@@ -53,14 +53,5 @@ matrixByRow(A,[],Z,Z).
 matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- print(Lm), repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
 
 %Matriz, Pieza, ContadorEnX, PosEsX, Salida.
-mvX(M,P,Cx,Nx,Z) :- Cx == Nx, matrixByRow(M,P,[],Z).
-mvX(M,P,Cx,Nx,Z) :- elimColumn(M,T), Nx is Cx+1, mvX(T,P,Cx,Nx,Z). 
-
-elimColumn(M1,Mres):- rait(M1,[],Res), invertir(Res,[],Mres).
-
-rait([],M,M).
-rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res). 
-
-invertir([],[],[]).
-invertir([],L1,L1).	
-invertir([L|C],Temp,Res):- invertir(C , [L|Temp], Res).
+mvX(M,P,Cx,Nx,Z) :- Cx == Nx, matrixByRow(M,P,[],U), append().
+mvX(M,P,Cx,Nx,Z) :- mvColumn(M,H,R), V is Cx+1, mvX(R,P,V,Nx,Z). 
