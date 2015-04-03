@@ -4,9 +4,9 @@ insIzq(Z1, Z2, Tz) :- reverse(Z1, T), equ(T, L1), reverse(Z2, L2), append(L2, L1
 
 insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
 
-compElem([],[]).
-compElem(_,[]).
-compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
+%compElem([],[]).
+%compElem(_,[]).
+%compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
 
 compRows([],[]).
 compRows(_,[]).
@@ -38,3 +38,10 @@ figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z)
 %Recursive function for comparing pieces
 piecesManager(_,[]).
 piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
+
+%Remplaza elimina pieza de figura original (listas)
+repElem(A,[],U,Z) :- append(U,A,Z).
+repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
+
+notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
+	 (X1==x,X2==o,R = x).
