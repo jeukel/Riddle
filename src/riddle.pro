@@ -54,5 +54,23 @@ compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
 	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
 	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
 
+%-----------------------------------------------------------------------------
 
+%Function for getting props of pieces
+getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
+getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
 
+%Recursive function for getting props of pieces
+pieceS([],X,X).
+pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
+
+%Do
+%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
+
+%--------------------------------------------------------------------------------
+
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B).
+
+%Recursive function for comparing pieces
+piecesManager(_,[]).
+piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
