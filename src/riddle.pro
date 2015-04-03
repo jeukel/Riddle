@@ -30,16 +30,47 @@ insIzq(Z1, Z2, Tz) :- reverse(Z1, T), equ(T, L1), reverse(Z2, L2), append(L2, L1
 
 insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
 
+%Compara que los elementos de LP esten en Lm.Tienen que estar consecutivos.
 compElem([],[]).
 compElem(_,[]).
 compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
 
+%Compara todas las filas de la original contra la pieza.
 compRows([],[]).
 compRows(_,[]).
 compRows([Lm|LmX],[Lp|LpX]) :- compElem(Lm,Lp), compRows(LmX,LpX).
 
-compMatrix([],[]).
-compMatrix([Lm|LmX],[Lp|LpX]) :- compRows([Lm|LmX],[Lp|LpX]); compMatrix(LmX,[Lp|LpX]).  
+%Tiene que ir moviendo la pieza hacia abajo.
+compMatrix([],[],X,X).
+compMatrix([Lm|LmX],[Lp|LpX],T, Y) :- (compRows([Lm|LmX],[Lp|LpX]),compMatrix([],[],T,Y));R is T+1,compMatrix(LmX,[Lp|LpX],R,Y).
 
+compMatrix([],X,X).
+compMatrix(Lm,Lp, Y):- compMatrix(Lm,Lp,1,X),compMatrix([],X,Y).
 
-compPiece([Lm|LmX],[Lp|LpX],Nm) :- compMatrix([Lm|LmX],[Lp|LpX]); elimColumn([Lm|LmX],R), compPiece(R,[Lp|LpX],Nm).
+compPiece([],_,X,Y,X,Y).
+compPiece(_,[],X,Y,X,Y).
+compPiece([],[],X,Y,X,Y).
+compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
+	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
+	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
+
+%-----------------------------------------------------------------------------
+
+%Function for getting props of pieces
+getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
+getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
+
+%Recursive function for getting props of pieces
+pieceS([],X,X).
+pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
+
+%Do
+%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
+
+%--------------------------------------------------------------------------------
+
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B).
+
+%Recursive function for comparing pieces
+piecesManager(_,[]).
+piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
