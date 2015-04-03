@@ -39,9 +39,11 @@ figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z)
 piecesManager(_,[]).
 piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
 
+
+
 %Remplaza elimina pieza de figura original (listas)
 repElem(A,[],U,Z) :- append(U,A,Z).
 repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
 
 notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
-	 (X1==x,X2==o,R = x).
+	 (X1==x,X2==o,R = x).	 
