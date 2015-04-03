@@ -14,3 +14,4 @@ compMatrix([Lm|LmX],[Lp|LpX],T, Y) :- (compRows([Lm|LmX],[Lp|LpX]),compMatrix([]
 
 compMatrix([],X,X).
 compMatrix(Lm,Lp, Y):- compMatrix(Lm,Lp,0,X),compMatrix([],X,Y).
+
