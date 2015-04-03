@@ -10,25 +10,29 @@ tomarLista([],L1,L1,L1).
 tomarLista([MH|MC], [], Lista, Res):-tomarLista(MC,[], [[MH]|Lista],Res).
 tomarLista([MH|MC],[Lista2|L2C],Lista, Res):- tomarLista(MC,L2C, [[MH|Lista2]|Lista],Res).
 
+%Remplaza elimina pieza de figura original (listas)
+repElem(A,[],U,Z) :- append(U,A,Z).
+repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
+
+%TABLA DE VERDAD
+notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
+	 (X1==x,X2==o,R = x).
+	 
+elimColumn(M1,Mres):- rait(M1,[],Res), invertir(Res,[],Mres).
+
+rait([],M,M).
+rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res). 
+
 invertir([],[],[]).
 invertir([],L1,L1).	
 invertir([L|C],Temp,Res):- invertir(C , [L|Temp], Res).
 
-
-notImplies(X1,X2,R):- (X1==x,X2==x,R = 0);(X1==0,X2==0,R = 0);
-	 (X1==x,X2==0,R = x); (X1==0,X2==x,R = 0).
-	 
-elimColumn(M1,Mres):- rait(M1,[],Res), invertir(Res,[],Mres).
-rait([],M,M).
-rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res). 
-
 quitarCabeza([_|C],C).
 
-equ([X|Tz], Res):- X == 0 , Res = Tz. 
-
 insIzq(Z1, Z2, Tz) :- reverse(Z1, T), equ(T, L1), reverse(Z2, L2), append(L2, L1, D), reverse(D, R), Tz = R.
-
 insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
+
+equ([X|Tz], Res):- X == 0 , Res = Tz. 
 
 %Compara que los elementos de LP esten en Lm.Tienen que estar consecutivos.
 compElem([],[]).
