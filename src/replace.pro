@@ -64,7 +64,12 @@ mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), app
 %------------------------------------------------------------------------------------
 
 correrY([],Y,Y2,X,Y2):- Y\=[],Y2\=[],reverse(Y,Z),X=Z.
-
 correrY([M|Mc],Y,Mres2,Mres):-correrY([M|Mc],Y,1,[],[],Mres2,Mres).
-
 correrY([M|Mc],Y,YT,T,T2,Mres2,Mres):-YT<Y,Yt is YT +1, correrY(Mc,Y,Yt,[M|T],Mc,Mres2,Mres); correrY([],T,T2,Mres,Mres2).
+
+%------------------------------------------------------------------------------------
+
+norepet([]).
+norepet([Lp|LpX]) :- norepet_aux(Lp,LpX), norepet(LpX).
+norepet_aux(_,[]).
+norepet_aux(H,[R|Rx]) :- H\=R, norepet_aux(H,Rx).
