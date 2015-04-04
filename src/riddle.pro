@@ -34,10 +34,6 @@ elimColumn(M1,Mres):- rait(M1,[],Res), reverse(Res,Mres2),Mres = Mres2.
 rait([],M,M).
 rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res). 
 
-%invertir([],[],[]).
-%invertir([],L1,L1).	
-%invertir([L|C],Temp,Res):- invertir(C , [L|Temp], Res).
-
 quitarCabeza([_|C],C).
 tomarCabeza([X|_],X).
 
@@ -74,7 +70,7 @@ compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
 	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
 	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
 
-%-------------------------------------------------------------------------------
+%-----------------------------------------------------------------------------
 
 %Function for getting props of pieces
 getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
@@ -87,7 +83,7 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 %Do
 %figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
 
-%-------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------
 
 figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B).
 
@@ -95,7 +91,6 @@ figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B)
 piecesManager(_,[]).
 piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
 
-<<<<<<< HEAD
 %-------------------------------------------------------------------------------
 %Parte una lista en el indice dado.
 correrY([],Y,Y2,X,Y2):- Y\=[],Y2\=[],reverse(Y,Z),X=Z.
@@ -131,7 +126,6 @@ rotarRandom([LPcs|LpcsC],T,Res):-
 	rotarMatriz(CabezaRes2,[],PiezaRotada),
 	append(Res5,[PiezaRotada],Res).
 
-=======
 %--------------------------------------------------------------------------------
 
 %Remplaza elimina pieza de figura original (listas)
@@ -155,4 +149,3 @@ mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
 mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
 
 %------------------------------------------------------------------------------------
->>>>>>> f30e1fef5892c0b7f57b9e0052f24fac1347545f
