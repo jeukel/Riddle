@@ -131,9 +131,6 @@ rotarRandom([LPcs|LpcsC],T,Res):-
 %Remplaza elimina pieza de figura original (listas)
 repElem(A,[],U,Z) :- append(U,A,Z).
 repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
-
-notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
-	 (X1==x,X2==o,R = x).	 
 	 
 %--------------------------------------------------------------------------------
 matrixByRow(A,[],Z,Z).
@@ -147,5 +144,15 @@ unify([M1|Mx],[M2|Ms],N,Z) :- append(M1,M2,N1), append(N,[N1],T), unify(Mx,Ms,T,
 
 mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
 mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
+
+%------------------------------------------------------------------------------------
+
+norepeat([]).
+norepeat([Lp|LpX]) :- norepeat_aux(Lp,LpX),repeatWrot(Lp,LpX,1), norepeat(LpX).
+repeatWrot(_,_,N) :- N == 4.
+repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), print(Z), T is N+1, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
+
+norepeat_aux(_,[]).
+norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
 
 %------------------------------------------------------------------------------------
