@@ -50,8 +50,21 @@ notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
 	 
 %--------------------------------------------------------------------------------
 matrixByRow(A,[],Z,Z).
-matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- print(Lm), repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
+matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
 
-%Matriz, Pieza, ContadorEnX, PosEsX, Salida.
-mvX(M,P,Cx,Nx,Z) :- Cx == Nx, matrixByRow(M,P,[],U), append().
-mvX(M,P,Cx,Nx,Z) :- mvColumn(M,H,R), V is Cx+1, mvX(R,P,V,Nx,Z). 
+%Matriz, Pieza, ContadorEnX, Cabeza, Resto.
+mvX(M,P,Nx,Z) :- mvColumn(M,Nx,[],[],H,R), matrixByRow(R,P,[],U), unify(H,U,[],Z).
+
+unify([],[],Z,Z).
+unify([M1|Mx],[M2|Ms],N,Z) :- append(M1,M2,N1), append(N,[N1],T), unify(Mx,Ms,T,Z).
+
+mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
+mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
+
+%------------------------------------------------------------------------------------
+
+correrY([],Y,Y2,X,Y2):- Y\=[],Y2\=[],reverse(Y,Z),X=Z.
+
+correrY([M|Mc],Y,Mres2,Mres):-correrY([M|Mc],Y,1,[],[],Mres2,Mres).
+
+correrY([M|Mc],Y,YT,T,T2,Mres2,Mres):-YT<Y,Yt is YT +1, correrY(Mc,Y,Yt,[M|T],Mc,Mres2,Mres); correrY([],T,T2,Mres,Mres2).
