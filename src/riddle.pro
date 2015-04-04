@@ -14,10 +14,6 @@ tomarLista([],[],L1,L1).
 tomarLista([MH|MC], [], Lista, Res):-tomarLista(MC,[], [[MH]|Lista],Res).
 tomarLista([MH|MC],[Lista2|L2C],Lista, Res):- tomarLista(MC,L2C, [[MH|Lista2]|Lista],Res).
 
-%Remplaza elimina pieza de figura original (listas)
-repElem(A,[],U,Z) :- append(U,A,Z).
-repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
-
 %-------------------------------------------------------------------------------
 %TABLA DE VERDAD
 %-------------
@@ -36,60 +32,6 @@ rait([H|C],T,Res):-quitarCabeza(H,HRes),rait(C,[HRes|T],Res).
 
 quitarCabeza([_|C],C).
 tomarCabeza([X|_],X).
-
-insIzq(Z1, Z2, Tz) :- reverse(Z1, T), equ(T, L1), reverse(Z2, L2), append(L2, L1, D), reverse(D, R), Tz = R.
-insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
-
-equ([X|Tz], Res):- X == 0 , Res = Tz. 
-
-%Compara que los elementos de LP esten en Lm.Tienen que estar consecutivos.
-compElem([],[]).
-compElem(_,[]).
-compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
-
-%Compara todas las filas de la original contra la pieza.
-compRows([],[]).
-compRows(_,[]).
-compRows([Lm|LmX],[Lp|LpX]) :- compElem(Lm,Lp), compRows(LmX,LpX).
-
-%Tiene que ir moviendo la pieza hacia abajo.
-compMatrix([],[],X,X).
-compMatrix([Lm|LmX],[Lp|LpX],T, Y) :-
-	(compRows([Lm|LmX],[Lp|LpX]),
-	compMatrix([],[],T,Y));
-	R is T+1,
-	compMatrix(LmX,[Lp|LpX],R,Y).
-
-compMatrix([],X,X).
-compMatrix(Lm,Lp, Y):- compMatrix(Lm,Lp,1,X),compMatrix([],X,Y).
-
-compPiece([],_,X,Y,X,Y).
-compPiece(_,[],X,Y,X,Y).
-compPiece([],[],X,Y,X,Y).
-compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
-	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
-	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
-
-%-----------------------------------------------------------------------------
-
-%Function for getting props of pieces
-getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
-getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
-
-%Recursive function for getting props of pieces
-pieceS([],X,X).
-pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
-
-%Do
-%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
-
-%--------------------------------------------------------------------------------
-
-figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B).
-
-%Recursive function for comparing pieces
-piecesManager(_,[]).
-piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
 
 %-------------------------------------------------------------------------------
 %Parte una lista en el indice dado.
@@ -121,10 +63,10 @@ rotarRandom([LPcs|LpcsC],T,Res):-
 	correrY([LPcs|LpcsC],Y,Res2,Res3),
 	append(T,Res3,Res4),
 	quitarCabeza(Res2,ColaRes2),
-	append(Res4,ColaRes2,Res5),
 	tomarCabeza(Res2,CabezaRes2),
 	rotarMatriz(CabezaRes2,[],PiezaRotada),
-	append(Res5,[PiezaRotada],Res).
+	append(Res4,[PiezaRotada],Res5),
+	append(Res5,ColaRes2,Res).
 
 %--------------------------------------------------------------------------------
 
@@ -133,7 +75,7 @@ repElem(A,[],U,Z) :- append(U,A,Z).
 repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
 	 
 %--------------------------------------------------------------------------------
-matrixByRow(A,[],Z,Z).
+matrixByRow(_,[],Z,Z).
 matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
 
 %Matriz, Pieza, ContadorEnX, Cabeza, Resto.
@@ -155,4 +97,55 @@ repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), print(Z), T is N+1, norepeat_aux(Z,L
 norepeat_aux(_,[]).
 norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
 
+%-------------------------------------------------------------------------------
+
+%Compara que los elementos de LP esten en Lm.Tienen que estar consecutivos.
+compElem([],[]).
+compElem(_,[]).
+compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
+
+%Compara todas las filas de la original contra la pieza.
+compRows([],[]).
+compRows(_,[]).
+compRows([Lm|LmX],[Lp|LpX]) :- compElem(Lm,Lp), compRows(LmX,LpX).
+
+%Tiene que ir moviendo la pieza hacia abajo.
+compMatrix([],[],X,X).
+compMatrix([Lm|LmX],[Lp|LpX],T, Y) :-
+	(compRows([Lm|LmX],[Lp|LpX]),
+	compMatrix([],[],T,Y));
+	R is T+1,
+	compMatrix(LmX,[Lp|LpX],R,Y).
+
+compMatrix([],X,X).
+compMatrix(Lm,Lp, Y):- compMatrix(Lm,Lp,1,X),compMatrix([],X,Y).
+
+compPiece([],_,X,Y,X,Y).
+compPiece(_,[],X,Y,X,Y).
+compPiece([],[],X,Y,X,Y).
+compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
+	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
+	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
+	
+%-------------------------------------------------------------------------------
+
+%Recursive function for comparing pieces
+piecesManager(_,[],X,Y).
+%piecesManager(Or, [ LnP | [Lp|LpX] ],T,Z) :- compPiece(Or,Lp,[],[],X,Y),NL= [X,Y] ,append[T,NL,W], piecesManager(Or, [LnP | LpX],W,Y).
+piecesManager(Or,[LnP|[Lp|LpX]],T,Z):-(norepeat([Lp|LpX]),compPiece(Or,Lp,[],[],X,Y),NL= [X,Y],append(T,NL,W),piecesManager(Or, [LnP | LpX],W,Z)); 
+	rotarRandom([Lp|LpX],[],Res),piecesManager(Or, Res,T,Z).
+%-------------------------------------------------------------------------------
+
+%Function for getting props of pieces
+getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
+getPropsRec([[Name|List]|_],[Z|[Zx|_]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
+
+%Recursive function for getting props of pieces
+pieceS([],X,X).
+pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
+
 %------------------------------------------------------------------------------------
+
+%Do
+%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],K).
