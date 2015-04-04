@@ -78,3 +78,27 @@ figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,B)
 %Recursive function for comparing pieces
 piecesManager(_,[]).
 piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
+
+%--------------------------------------------------------------------------------
+
+%Remplaza elimina pieza de figura original (listas)
+repElem(A,[],U,Z) :- append(U,A,Z).
+repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
+
+notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
+	 (X1==x,X2==o,R = x).	 
+	 
+%--------------------------------------------------------------------------------
+matrixByRow(A,[],Z,Z).
+matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
+
+%Matriz, Pieza, ContadorEnX, Cabeza, Resto.
+mvX(M,P,Nx,Z) :- mvColumn(M,Nx,[],[],H,R), matrixByRow(R,P,[],U), unify(H,U,[],Z).
+
+unify([],[],Z,Z).
+unify([M1|Mx],[M2|Ms],N,Z) :- append(M1,M2,N1), append(N,[N1],T), unify(Mx,Ms,T,Z).
+
+mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
+mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
+
+%------------------------------------------------------------------------------------
