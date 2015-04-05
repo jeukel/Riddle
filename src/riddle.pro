@@ -132,6 +132,31 @@ compPiece(Matriz,Pieza,Xt,Yt,Rt,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y)),Ro
 	 (Rt\=4,rotarMatriz(Pieza,[],PiezaRotada),Rts is Rt +1,compPiece(Matriz,PiezaRotada,Xt,Yt,Rts,Rot,X,Y)).
 
 compPiece(Matriz,Pieza,Rot,X,Y):-compPiece(Matriz,Pieza,1,1,0,Rot,X,Y).
+%-------------------------------------------------------------------------------
+%Turns num rotations into the name of the piece.
+setRotNames(_,[],Z,Z).
+setRotNames(Ns,[Num|R],A,Z) :-nth1(Num,Ns,Name), append(A,[Name],U),setRotNames(Ns,R,U,Z).
+
+%list of counted elements
+getQuant([Name|Names],Rots,A,S) :- setRotNames([Name|Names],Rots,[],Z), occurrences(Z,Name,U), append(A,[U],T), getQuant_aux(Names,Z,T,S).
+getQuant_aux([],_,S,S).
+getQuant_aux([Name|Names],Rots,A,S) :- occurrences(Rots,Name,U), append(A,[U],T), getQuant_aux(Names,Rots,T,S).
+
+occurrences([],_,0).
+occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
+occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
+
+%------------------------------------------------------------------------------------
+
+solFormat([Name|Names],Rots,A,B) :- getQuant([Name|Names],Rots,[],W), W=[U|Us], getRot(U,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Us,Z,B).
+solFormat_aux([Name|Names],[R|Rl],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Rl,Z,B).
+solFormat_aux([],[],B,B).
+
+getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
+getRot(0,0).
+getRot(1,90).
+getRot(2,180).
+getRot(3,270).
 
 	
 %-------------------------------------------------------------------------------
