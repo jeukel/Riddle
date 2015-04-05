@@ -197,7 +197,7 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 %-------------------------------------------------------------------------------
 
 %Do
-figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Z=[_|[Wtf|_]],reverse(Wtf,Ftw),norepeat(Ftw),Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat2(Zh,Rots,Coor,[],Sol).
+figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Z=[_|[Wtf|_]],reverse(Wtf,Ftw),norepeat(Ftw),Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat3(Zh,Rots,Coor,[],Sol).
 %[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]]
 %[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]
 %figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]],[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]],Sol)
