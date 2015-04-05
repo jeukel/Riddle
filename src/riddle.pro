@@ -56,11 +56,12 @@ zeroFilln([M|Mc],[Mp|MpC],T,Res):-
 	Res=Res4. 
 	
 %----------------------------------------------------------------
-rotarRandom([LPcs|LpcsC],T,Res):-
+%Testing purposes : rotarRandom([[a,b,c],[c,d,e],[e,f,g]],[],Num,Res).
+rotarRandom(ListaPcs,Num,Res):-rotarRandom(ListaPcs,[],Num,Res).
+rotarRandom([LPcs|LpcsC],T,Num,Res):-
 	length([LPcs|LpcsC],X),
-	Xt is X+1,
-	random_between(1,Xt,Y),
-	correrY([LPcs|LpcsC],Y,Res2,Res3),
+	random_between(1,X,Num),
+	correrY([LPcs|LpcsC],Num,Res2,Res3),
 	append(T,Res3,Res4),
 	quitarCabeza(Res2,ColaRes2),
 	tomarCabeza(Res2,CabezaRes2),
@@ -129,11 +130,6 @@ compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
 	
 %-------------------------------------------------------------------------------
 
-%Recursive function for comparing pieces
-piecesManager(_,[],X,Y).
-%piecesManager(Or, [ LnP | [Lp|LpX] ],T,Z) :- compPiece(Or,Lp,[],[],X,Y),NL= [X,Y] ,append[T,NL,W], piecesManager(Or, [LnP | LpX],W,Y).
-piecesManager(Or,[LnP|[Lp|LpX]],T,Z):-(norepeat([Lp|LpX]),compPiece(Or,Lp,[],[],X,Y),NL= [X,Y],append(T,NL,W),piecesManager(Or, [LnP | LpX],W,Z)); 
-	rotarRandom([Lp|LpX],[],Res),piecesManager(Or, Res,T,Z).
 %-------------------------------------------------------------------------------
 
 %Function for getting props of pieces
@@ -149,3 +145,4 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 %Do
 %figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
 figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],K).
+
