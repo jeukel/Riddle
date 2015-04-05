@@ -128,8 +128,14 @@ compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
 	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
 	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
 	
-%-------------------------------------------------------------------------------
+compPiece(Matriz,Pieza,Xt,Yt,Rt,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y)),Rot=Rt;
+	 (Rt\=4,rotarMatriz(Pieza,[],PiezaRotada),Rts is Rt +1,compPiece(Matriz,PiezaRotada,Xt,Yt,Rts,Rot,X,Y)).
 
+compPiece(Matriz,Pieza,Rot,X,Y):-compPiece(Matriz,Pieza,1,1,0,Rot,X,Y).
+
+	
+%-------------------------------------------------------------------------------
+%Funcion que devuelva una lista de rotaciones
 %-------------------------------------------------------------------------------
 
 %Function for getting props of pieces
