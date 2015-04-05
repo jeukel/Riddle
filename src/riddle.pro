@@ -57,8 +57,8 @@ zeroFilln([M|Mc],[Mp|MpC],T,Res):-
 	
 %----------------------------------------------------------------
 %Testing purposes : rotarRandom([[a,b,c],[c,d,e],[e,f,g]],[],Num,Res).
-rotarRandom(ListaPcs,Num,Res):-rotarRandom(ListaPcs,[],Num,Res).
-rotarRandom([LPcs|LpcsC],T,Num,Res):-
+scramble(ListaPcs,Num,Res):-scramble(ListaPcs,[],Num,Res).
+scramble([LPcs|LpcsC],T,Num,Res):-
 	length([LPcs|LpcsC],X),
 	random_between(1,X,Num),
 	correrY([LPcs|LpcsC],Num,Res2,Res3),
@@ -76,15 +76,19 @@ repElem(A,[],U,Z) :- append(U,A,Z).
 repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
 	 
 %--------------------------------------------------------------------------------
-matrixByRow(_,[],Z,Z).
+matrixByRow([],[],Z,Z).
+matrixByRow(M,[],U,Z) :-append(U,M,Z).
 matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
 
 %Matriz, Pieza, ContadorEnX, Cabeza, Resto.
-mvX(M,P,Nx,Z) :- mvColumn(M,Nx,[],[],H,R), matrixByRow(R,P,[],U), unify(H,U,[],Z).
+mvX([],[],Z,Z).
+mvX(M,P,Nx,Z) :- mvColumn(M,Nx,[],[],H,R), matrixByRow(R,P,[],U),unify(H,U,[],Z).
 
 unify([],[],Z,Z).
+unify([],Z,[],Z).
 unify([M1|Mx],[M2|Ms],N,Z) :- append(M1,M2,N1), append(N,[N1],T), unify(Mx,Ms,T,Z).
 
+mvColumn(M,N,[],[],[],M) :- N==1.
 mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
 mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
 
@@ -133,17 +137,22 @@ compPiece(Matriz,Pieza,Xt,Yt,Rt,PR,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y))
 
 
 %%------------------------------------------------------------------------------------
-piecesManager(Or,[Lp|LpX],U,V,Cd,Rt) :- 
-	compPiece(Or,Lp,1,1,1,R,X,Y),
-	toZERO(Or,Lp,X,Y,M),	
-	append(U,[X|Y],Us),
-	append(V,[R],Vs),
-	piecesManager(M,LpX,Us,Vs,Cd,Rt).
+superPiecesMan(Or,Pcs,Coor,Rots):-piecesManager(Or,Pcs,[],[],Coor,Rots);circular(Pcs,0,PcsC),superPiecesMan(Or,PcsC,Coor,Rots).
+piecesManager(_,[],Cd,Rt,Cd,Rt).
+piecesManager(Or,[Lp|Lps],U,V,Cd,Rt) :- 
+	compPiece(Or,Lp,1,1,0,Pr,R,X,Y),
+	toZERO(Or,Pr,X,Y,M),append(U,[[X,Y]],Us),append(V,[R],Vs),
+	print(M),nl,
+	piecesManager(M,Lps,Us,Vs,Cd,Rt).
 
 toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
-		      append([],Antes,MatrizSuperior), 
-		      mvX(Despues,P,X,MatrizInferior), 
-		      append(MatrizSuperior,MatrizInferior,M).
+		      append([],[Antes],MatrizSuperior),%print(MatrizSuperior),
+		      mvX(Despues,P,X,MatrizInferior)%print(MatrizInferior),
+			,toDoOrNotToDo(MatrizSuperior,MatrizInferior,M).
+		      
+
+toDoOrNotToDo([[]],M,M).		      
+toDoOrNotToDo(M1,M2,M) :- append(M1,M2,M).
 %%------------------------------------------------------------------------------------
 
 getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
@@ -173,5 +182,9 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %Do
 %figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
+<<<<<<< HEAD
 figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],[],Cd,Rt).
+=======
+figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc], piecesManager(Or,Zc,[],[],Coor,Rots),solFormat(Zh,Rots,[],Sol).
+>>>>>>> bdc53e681bd0a913bb9f5d1e37ee38db5cf14094
 
