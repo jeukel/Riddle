@@ -182,9 +182,5 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %Do
 %figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
-<<<<<<< HEAD
-figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],[],Cd,Rt).
-=======
 figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc], piecesManager(Or,Zc,[],[],Coor,Rots),solFormat(Zh,Rots,[],Sol).
->>>>>>> bdc53e681bd0a913bb9f5d1e37ee38db5cf14094
 
