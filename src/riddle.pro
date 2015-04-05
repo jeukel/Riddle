@@ -146,18 +146,17 @@ occurrences([],_,0).
 occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
 occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
 
-%------------------------------------------------------------------------------------
-
-solFormat([Name|Names],Rots,A,B) :- getQuant([Name|Names],Rots,[],W), W=[U|Us], getRot(U,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Us,Z,B).
-solFormat_aux([Name|Names],[R|Rl],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Rl,Z,B).
-solFormat_aux([],[],B,B).
-
 getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
 getRot(0,0).
 getRot(1,90).
 getRot(2,180).
 getRot(3,270).
 
+%------------------------------------------------------------------------------------
+
+solFormat([Name|Names],Rots,A,B) :- getQuant([Name|Names],Rots,[],W), W=[U|Us], getRot(U,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Us,Z,B).
+solFormat_aux([Name|Names],[R|Rl],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Rl,Z,B).
+solFormat_aux([],[],B,B).
 	
 %-------------------------------------------------------------------------------
 %Funcion que devuelva una lista de rotaciones
