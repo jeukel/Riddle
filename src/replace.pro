@@ -87,9 +87,6 @@ occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
 solFormat([Name|Names],[R|Rx],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat(Names,Rx,Z,B).
 solFormat([],[],B,B).
 
-solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
-solFormat2([],[],[],B,B).
-
 getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
 getRot(0,0).
 getRot(1,90).
@@ -111,6 +108,9 @@ toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes),
 		      append(MatrizSuperior,MatrizInferior,M).
 
 %%------------------------------------------------------------------------------------
+
+solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
+solFormat2([],[],[],B,B).
 
 isElemNull([]).
 isElemNull([Lm|LmX]) :- Lm == 0, compElem(LmX).
