@@ -128,6 +128,10 @@ compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
 	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
 	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
 	
+compPiece(Matriz,Pieza,Xt,Yt,Rt,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y)),Rot=Rt;
+	 (Rt\=4,rotarMatriz(Pieza,[],PiezaRotada),Rts is Rt +1,compPiece(Matriz,PiezaRotada,Xt,Yt,Rts,Rot,X,Y)).
+
+compPiece(Matriz,Pieza,Rot,X,Y):-compPiece(Matriz,Pieza,1,1,0,Rot,X,Y).
 %-------------------------------------------------------------------------------
 %Turns num rotations into the name of the piece.
 setRotNames(_,[],Z,Z).
@@ -142,18 +146,20 @@ occurrences([],_,0).
 occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
 occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
 
-%------------------------------------------------------------------------------------
-
-solFormat([Name|Names],Rots,A,B) :- getQuant([Name|Names],Rots,[],W), W=[U|Us], getRot(U,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Us,Z,B).
-solFormat_aux([Name|Names],[R|Rl],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Rl,Z,B).
-solFormat_aux([],[],B,B).
-
 getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
 getRot(0,0).
 getRot(1,90).
 getRot(2,180).
 getRot(3,270).
 
+%------------------------------------------------------------------------------------
+
+solFormat([Name|Names],Rots,A,B) :- getQuant([Name|Names],Rots,[],W), W=[U|Us], getRot(U,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Us,Z,B).
+solFormat_aux([Name|Names],[R|Rl],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat_aux(Names,Rl,Z,B).
+solFormat_aux([],[],B,B).
+	
+%-------------------------------------------------------------------------------
+%Funcion que devuelva una lista de rotaciones
 %-------------------------------------------------------------------------------
 
 %Function for getting props of pieces
