@@ -117,7 +117,7 @@ isElemNull([Lm|LmX]) :- Lm == 0, compElem(LmX).
 isRowsNull([]).
 isRowsNull([Lm|LmX]) :- compElem(Lm), compRows(LmX).
 isMatrixNull([]).
-isMatrixNull([Lm|LmX]) :- compRows([Lm|LmX]); compMatrix(LmX).
+isMatrixNull([Lm|LmX]) :- compRows(Lm); compMatrix(LmX).
 
 
 %
