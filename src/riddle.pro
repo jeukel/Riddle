@@ -69,13 +69,13 @@ scramble([LPcs|LpcsC],T,Num,Res):-
 	append(Res4,[PiezaRotada],Res5),
 	append(Res5,ColaRes2,Res).
 
-%--------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 
 %Remplaza elimina pieza de figura original (listas)
 repElem(A,[],U,Z) :- append(U,A,Z).
 repElem([Lm|LmX],[Lp|LpX], U, Z) :- notImplies(Lm,Lp,D), append(U,[D],T),repElem(LmX,LpX,T,Z).
 	 
-%--------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 matrixByRow([],[],Z,Z).
 matrixByRow(M,[],U,Z) :-append(U,M,Z).
 matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
@@ -92,7 +92,7 @@ mvColumn(M,N,[],[],[],M) :- N==1.
 mvColumn([],_,T1,T2,R,H) :- reverse(T1,H), reverse(T2,R).
 mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), append([W2],T2,Z2), mvColumn(Mlx,Nx,Z1,Z2,H,R).
 
-%------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 
 norepeat([]).
 norepeat([Lp|LpX]) :- norepeat_aux(Lp,LpX),repeatWrot(Lp,LpX,1), norepeat(LpX).
@@ -107,7 +107,7 @@ norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
 %Compara que los elementos de LP esten en Lm.Tienen que estar consecutivos.
 compElem([],[]).
 compElem(_,[]).
-compElem([Lm|LmX],[Lp|LpX]) :- Lm == Lp, compElem(LmX,LpX).
+compElem([Lm|LmX],[Lp|LpX]) :-Lm == Lp, compElem(LmX,LpX);Lm==x,Lp==o,compElem(LmX,LpX).
 
 %Compara todas las filas de la original contra la pieza.
 compRows([],[]).
@@ -129,20 +129,19 @@ compPiece([],_,X,Y,X,Y).
 compPiece(_,[],X,Y,X,Y).
 compPiece([],[],X,Y,X,Y).
 compPiece([Lm|LmX],[Lp|LpX],T1,T2,X,Y) :-
-	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));
-	(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
+	(compMatrix([Lm|LmX],[Lp|LpX],T3),compPiece([],[Lp|LpX],T1,T3,X,Y));(elimColumn([Lm|LmX],Mres),Xt is T1 + 1,compPiece(Mres,[Lp|LpX],Xt,T2,X,Y)).
 	
 compPiece(Matriz,Pieza,Xt,Yt,Rt,PR,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y)),Rot=Rt,PR=Pieza;
 	 (Rt\=4,rotarMatriz(Pieza,[],PiezaRotada),Rts is Rt +1,compPiece(Matriz,PiezaRotada,Xt,Yt,Rts,PR,Rot,X,Y)).
 
 
-%%------------------------------------------------------------------------------------
-superPiecesMan(Or,Pcs,Coor,Rots):-piecesManager(Or,Pcs,[],[],Coor,Rots);circular(Pcs,0,PcsC),superPiecesMan(Or,PcsC,Coor,Rots).
-piecesManager(_,[],Cd,Rt,Cd,Rt).
+%%------------------------------------------------------------------------------
+superPiecesMan(Or,Pcs,Num,Coor,Rots):-piecesManager(Or,Pcs,[],[],Coor,Rots);
+	circular(Pcs,Num,PcsC),Num2 is Num+1,superPiecesMan(Or,PcsC,Coor,Num2,Rots).
+piecesManager(M,[],Cd,Rt,Cd,Rt):-isMatrixNull(M).
 piecesManager(Or,[Lp|Lps],U,V,Cd,Rt) :- 
 	compPiece(Or,Lp,1,1,0,Pr,R,X,Y),
 	toZERO(Or,Pr,X,Y,M),append(U,[[X,Y]],Us),append(V,[R],Vs),
-	print(M),nl,
 	piecesManager(M,Lps,Us,Vs,Cd,Rt).
 
 toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
@@ -153,7 +152,7 @@ toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes),
 
 toDoOrNotToDo([[]],M,M).		      
 toDoOrNotToDo(M1,M2,M) :- append(M1,M2,M).
-%%------------------------------------------------------------------------------------
+%%------------------------------------------------------------------------------
 
 getRot(A,B) :- A>=4 , T is A-4, getRot(T,B).
 getRot(0,0).
@@ -161,10 +160,20 @@ getRot(1,90).
 getRot(2,180).
 getRot(3,270).
 
-%------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 
 solFormat([Name|Names],[R|Rx],A,B) :- getRot(R,T), G=(Name,T), append(A,[G],Z), solFormat(Names,Rx,Z,B).
 solFormat([],[],B,B).
+
+solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
+solFormat2([],[],[],B,B).
+%-------------------------------------------------------------------------------
+isRowsNull([]).
+isRowsNull([Lm|LmX]) :- Lm == o, isRowsNull(LmX).
+isMatrixNull([]).
+isMatrixNull([Lm|LmX]) :- isRowsNull(Lm), isMatrixNull(LmX).
+
+circular([M|Mft],N,Z) :- length([M|Mft],U), N\=U, append(Mft,[M],Z).
 	
 %-------------------------------------------------------------------------------
 %Funcion que devuelva una lista de rotaciones
@@ -178,9 +187,17 @@ getPropsRec([[Name|List]|_],[Z|[Zx|_]],Lf) :- append(Z,[Name],A), append(Zx,List
 pieceS([],X,X).
 pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
-%------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 
 %Do
-%figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
-figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc], piecesManager(Or,Zc,[],[],Coor,Rots),solFormat(Zh,Rots,[],Sol).
+figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat2(Zh,Rots,Coor,[],Sol).
+%[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]]
+%[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]
+%figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]],[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]],Sol)
 
+%[[o,o,x,o,o],[o,x,x,x,o],[x,x,x,x,x],[o,x,o,x,o]]
+%[a,[[x],[x]]]
+%[b,[[o,x,o],[x,x,x],[o,x,o]]]
+%[c,[[x,o],[x,x],[x,o]]]
+
+%figures([[o,o,x,o,o],[o,x,x,x,o],[x,x,x,x,x],[o,x,o,x,o]],[[a,[[x],[x]]],[b,[[o,x,o],[x,x,x],[o,x,o]]],[c,[[x,o],[x,x],[x,o]]]],Sol).
