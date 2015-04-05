@@ -9,7 +9,7 @@ insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
 %-----------------------------------------------------------------------------
 
 %Function for getting props of pieces
-getProps([Name|List],Z) :- append([],[Name],A), print(A), append([],List,B), [A|[B]] = Z. 
+getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z. 
 %getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
 getPropsRec([[Name|List]|_],[Z|[Zx|_]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
 
@@ -22,15 +22,35 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %--------------------------------------------------------------------------------
 
+rotarMatriz([],L1,L1).
+rotarMatriz([M|C], Temp , Res):- not( is_list(M)),
+				 tomarLista([M|C],
+				 Temp,[],A),
+				 reverse(A,B),
+				 rotarMatriz([],B,Res).
+				 
+rotarMatriz([M|C], Temp , Res):- is_list(M),
+				 tomarLista(M , Temp , [], A),
+				 reverse(A,B),
+				 rotarMatriz(C,B,Res).
+				 
+tomarLista([],[],L1,L1).
+tomarLista([MH|MC], [], Lista, Res):-tomarLista(MC,[], [[MH]|Lista],Res).
+tomarLista([MH|MC],[Lista2|L2C],Lista, Res):- tomarLista(MC,L2C, [[MH|Lista2]|Lista],Res).
+
 norepeat([]).
 norepeat([Lp|LpX]) :- norepeat_aux(Lp,LpX),repeatWrot(Lp,LpX,1), norepeat(LpX).
-repeatWrot(_,_,N) :- N == 4.
-repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), print(Z), T is N+1, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
+
+%TO DO
+%Revizar condición de salida.
+repeatWrot(_,_,N) :- N >= 4.
+repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), T is N+1, print(T),nl, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
 
 norepeat_aux(_,[]).
 norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
 
-figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), Z=[W|[Wtf|_]], print(Wtf).%norepeat(Wtf).
+%figures(Or,[Lp|LpX],Z) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[_|[Wtf|_]], norepeat(Wtf).
+figures([Lp|LpX],Z) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[_|[Wtf|_]],reverse(Wtf,Ftw),norepeat(Ftw).
 
 %--------------------------------------------------------------------------------
 
