@@ -9,7 +9,7 @@ insDer(Z1, Z2, Tz) :- equ(Z2, L2), append(Z1,L2,Tz).
 %-----------------------------------------------------------------------------
 
 %Function for getting props of pieces
-getProps([Name|List],Z) :- append([],[Name],A), append([],List,B), [A|[B]] = Z.
+getProps([Name|List],Z) :- append([],[Name],A), print(A), append([],List,B), [A|[B]] = Z. 
 %getPropsRec([[Name|List]|Xs],[Z|[Zx|Tx]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
 getPropsRec([[Name|List]|_],[Z|[Zx|_]],Lf) :- append(Z,[Name],A), append(Zx,List,B), Lf = [A|[B]].
 
@@ -22,11 +22,15 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %--------------------------------------------------------------------------------
 
-figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z).
+norepeat([]).
+norepeat([Lp|LpX]) :- norepeat_aux(Lp,LpX),repeatWrot(Lp,LpX,1), norepeat(LpX).
+repeatWrot(_,_,N) :- N == 4.
+repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), print(Z), T is N+1, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
 
-%Recursive function for comparing pieces
-piecesManager(_,[]).
-piecesManager(Or, [Pc|Pcs]) :- compPiece(Or, Pc), piecesManager(Or, Pcs).
+norepeat_aux(_,[]).
+norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
+
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), Z=[W|[Wtf|_]], print(Wtf).%norepeat(Wtf).
 
 %--------------------------------------------------------------------------------
 
@@ -55,13 +59,6 @@ mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), app
 correrY([],Y,Y2,X,Y2):- Y\=[],Y2\=[],reverse(Y,Z),X=Z.
 correrY([M|Mc],Y,Mres2,Mres):-correrY([M|Mc],Y,1,[],[],Mres2,Mres).
 correrY([M|Mc],Y,YT,T,T2,Mres2,Mres):-YT<Y,Yt is YT +1, correrY(Mc,Y,Yt,[M|T],Mc,Mres2,Mres); correrY([],T,T2,Mres,Mres2).
-
-%------------------------------------------------------------------------------------
-
-norepet([]).
-norepet([Lp|LpX]) :- norepet_aux(Lp,LpX), norepet(LpX).
-norepet_aux(_,[]).
-norepet_aux(H,[R|Rx]) :- H\=R, norepet_aux(H,Rx).
 
 %------------------------------------------------------------------------------------
 
@@ -117,6 +114,7 @@ isRowsNull([Lm|LmX]) :- Lm == o, isRowsNull(LmX).
 isMatrixNull([]).
 isMatrixNull([Lm|LmX]) :- isRowsNull(Lm), isMatrixNull(LmX).
 
+circular([M|Mft],N,Z) :- length([M|Mft],U), N\=U, append(Mft,[M],Z).
 
 %
 %

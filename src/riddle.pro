@@ -173,5 +173,5 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 
 %Do
 %figures([Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z).
-figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],K).
+figures(Or, [Lp|LpX], Z) :- getProps(Lp,U), pieceS(LpX,U,Z), piecesManager(Or,Z,[],[],Cd,Rt).
 
