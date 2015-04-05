@@ -112,12 +112,10 @@ toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes),
 solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
 solFormat2([],[],[],B,B).
 
-isElemNull([]).
-isElemNull([Lm|LmX]) :- Lm == 0, compElem(LmX).
 isRowsNull([]).
-isRowsNull([Lm|LmX]) :- compElem(Lm), compRows(LmX).
+isRowsNull([Lm|LmX]) :- Lm == o, isRowsNull(LmX).
 isMatrixNull([]).
-isMatrixNull([Lm|LmX]) :- compRows(Lm); compMatrix(LmX).
+isMatrixNull([Lm|LmX]) :- isRowsNull(Lm), isMatrixNull(LmX).
 
 
 %
