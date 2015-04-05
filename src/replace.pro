@@ -109,14 +109,13 @@ piecesManager(Or,[Lp|LpX],U,V,Cd,Rt) :-
 	append(U,[X|Y],Us),
 	append(V,[R],Vs),
 	piecesManager(M,LpX,Us,Vs,Cd,Rt).
-%------------------------------------------------------------------------------------
 
 toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
 		      append([],Antes,MatrizSuperior), 
 		      mvX(Despues,P,X,MatrizInferior), 
 		      append(MatrizSuperior,MatrizInferior,M).
 
-%
+%%------------------------------------------------------------------------------------
 %
 %
 %

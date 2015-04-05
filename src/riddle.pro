@@ -132,7 +132,21 @@ compPiece(Matriz,Pieza,Xt,Yt,Rt,Rot,X,Y):-(compPiece(Matriz,Pieza,Xt,Yt,X,Y)),Ro
 	 (Rt\=4,rotarMatriz(Pieza,[],PiezaRotada),Rts is Rt +1,compPiece(Matriz,PiezaRotada,Xt,Yt,Rts,Rot,X,Y)).
 
 compPiece(Matriz,Pieza,Rot,X,Y):-compPiece(Matriz,Pieza,1,1,0,Rot,X,Y).
-%-------------------------------------------------------------------------------
+
+%%------------------------------------------------------------------------------------
+piecesManager(Or,[Lp|LpX],U,V,Cd,Rt) :- 
+	compPiece(Or,Lp,1,1,1,R,X,Y),
+	toZERO(Or,Lp,X,Y,M),	
+	append(U,[X|Y],Us),
+	append(V,[R],Vs),
+	piecesManager(M,LpX,Us,Vs,Cd,Rt).
+
+toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
+		      append([],Antes,MatrizSuperior), 
+		      mvX(Despues,P,X,MatrizInferior), 
+		      append(MatrizSuperior,MatrizInferior,M).
+%%------------------------------------------------------------------------------------
+
 %Turns num rotations into the name of the piece.
 setRotNames(_,[],Z,Z).
 setRotNames(Ns,[Num|R],A,Z) :-nth1(Num,Ns,Name), append(A,[Name],U),setRotNames(Ns,R,U,Z).
