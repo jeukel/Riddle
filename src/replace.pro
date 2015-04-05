@@ -129,6 +129,11 @@ toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes),
 solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
 solFormat2([],[],[],B,B).
 
+solFormat3([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), getRidOf(Cd,E), G=(Name,T,E), append(A,[G],Z), solFormat3(Names,Rx,CdX,Z,Sol).
+solFormat3([],[],[],B,B).
+
+getRidOf([A,B],Z):- Z = (A,B).
+
 isRowsNull([]).
 isRowsNull([Lm|LmX]) :- Lm == o, isRowsNull(LmX).
 isMatrixNull([]).
