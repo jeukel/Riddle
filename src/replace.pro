@@ -52,7 +52,7 @@ notImplies(X1,X2,R):- (X1==x,X2==x,R = o);(X1==o,X2==o,R = o);
 matrixByRow(_,[],Z,Z).
 matrixByRow([Lm|LmX],[Lp|LpX],U, Z) :- repElem(Lm,Lp,[],T), append(U,[T],W), matrixByRow(LmX,LpX,W,Z).
 
-%Matriz, Pieza, ContadorEnX, Cabeza, Resto.
+%Matriz, Pieza, ContadorEnX, Resto.
 mvX(M,P,Nx,Z) :- mvColumn(M,Nx,[],[],H,R), matrixByRow(R,P,[],U), unify(H,U,[],Z).
 
 unify([],[],Z,Z).
@@ -100,3 +100,23 @@ getRot(0,0).
 getRot(1,90).
 getRot(2,180).
 getRot(3,270).
+
+%------------------------------------------------------------------------------------
+
+piecesManager(Or,[Lp|LpX],U,V,Cd,Rt) :- 
+	compPiece(Or,Lp,1,1,1,R,X,Y),
+	toZERO(Or,Lp,X,Y,M),	
+	append(U,[X|Y],Us),
+	append(V,[R],Vs),
+	piecesManager(M,LpX,Us,Vs,Cd,Rt).
+%------------------------------------------------------------------------------------
+
+toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
+		      append([],Antes,MatrizSuperior), 
+		      mvX(Despues,P,X,MatrizInferior), 
+		      append(MatrizSuperior,MatrizInferior,M).
+
+%
+%
+%
+%
