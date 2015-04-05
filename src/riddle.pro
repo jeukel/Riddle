@@ -96,11 +96,13 @@ mvColumn([Ml|Mlx],Nx,T1,T2,H,R) :- correrY(Ml,Nx,W1,W2), append([W1],T1,Z1), app
 
 norepeat([]).
 norepeat([Lp|LpX]) :- norepeat_aux(Lp,LpX),repeatWrot(Lp,LpX,1), norepeat(LpX).
-repeatWrot(_,_,N) :- N == 4.
-repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), print(Z), T is N+1, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
+
+repeatWrot(_,_,N) :- N >= 4.
+repeatWrot(H,LpX,N) :- rotarMatriz(H,[],Z), T is N+1, norepeat_aux(Z,LpX), repeatWrot(Z,LpX,T).
 
 norepeat_aux(_,[]).
 norepeat_aux(H,[R|Rx]) :- H\=R, norepeat_aux(H,Rx).
+
 
 %-------------------------------------------------------------------------------
 
@@ -167,6 +169,11 @@ solFormat([],[],B,B).
 
 solFormat2([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), G=(Name,T,Cd), append(A,[G],Z), solFormat2(Names,Rx,CdX,Z,Sol).
 solFormat2([],[],[],B,B).
+
+solFormat3([Name|Names],[R|Rx],[Cd|CdX],A,Sol) :- getRot(R,T), getRidOf(Cd,E), G=(Name,T,E), append(A,[G],Z), solFormat3(Names,Rx,CdX,Z,Sol).
+solFormat3([],[],[],B,B).
+
+getRidOf([A,B],Z):- Z = (A,B).
 %-------------------------------------------------------------------------------
 isRowsNull([]).
 isRowsNull([Lm|LmX]) :- Lm == o, isRowsNull(LmX).
@@ -190,7 +197,7 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 %-------------------------------------------------------------------------------
 
 %Do
-figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat2(Zh,Rots,Coor,[],Sol).
+figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Z=[_|[Wtf|_]],reverse(Wtf,Ftw),norepeat(Ftw),Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat2(Zh,Rots,Coor,[],Sol).
 %[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]]
 %[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]
 %figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]],[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]],Sol)
