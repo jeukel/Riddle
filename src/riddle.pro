@@ -1,14 +1,15 @@
 rotarMatriz([],L1,L1).
-rotarMatriz([M|C], Temp , Res):- not( is_list(M)),
-				 tomarLista([M|C],
-				 Temp,[],A),
-				 reverse(A,B),
-				 rotarMatriz([],B,Res).
+%rotarMatriz([M|C], Temp , Res):- not( is_list(M)),tomarLista([M|C], Temp,[],A), reverse(A,B), rotarMatriz([],B,Res).
 				 
 rotarMatriz([M|C], Temp , Res):- is_list(M),
 				 tomarLista(M , Temp , [], A),
 				 reverse(A,B),
-				 rotarMatriz(C,B,Res).
+				 rotarMatriz(C,B,Res);
+				 not( is_list(M)),
+				 tomarLista([M|C],
+				 Temp,[],A),
+				 reverse(A,B),
+				 rotarMatriz([],B,Res).
 
 tomarLista([],[],L1,L1).
 tomarLista([MH|MC], [], Lista, Res):-tomarLista(MC,[], [[MH]|Lista],Res).
@@ -147,7 +148,7 @@ piecesManager(Or,[Lp|Lps],U,V,Cd,Rt) :-
 	piecesManager(M,Lps,Us,Vs,Cd,Rt).
 
 toZERO(Or,P,X,Y,M) :- correrY(Or,Y,Despues,Antes), 
-		      append([],[Antes],MatrizSuperior),%print(MatrizSuperior),
+		      append([],Antes,MatrizSuperior),%print(MatrizSuperior),
 		      mvX(Despues,P,X,MatrizInferior)%print(MatrizInferior),
 			,toDoOrNotToDo(MatrizSuperior,MatrizInferior,M).
 		      
@@ -197,14 +198,33 @@ pieceS([Lp|LpX],U,Z) :- getPropsRec([Lp],U,Lf), pieceS(LpX,Lf,Z).
 %-------------------------------------------------------------------------------
 
 %Do
-figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Z=[_|[Wtf|_]],reverse(Wtf,Ftw),norepeat(Ftw),Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat3(Zh,Rots,Coor,[],Sol).
-%[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]]
-%[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]
-%figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]],[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]],Sol)
+figures(Or, [Lp|LpX], Sol) :- getProps(Lp,U), pieceS(LpX,U,Z),Z=[Zh|Zc],Zc=[ZcH|_],superPiecesMan(Or,ZcH,0,Coor,Rots),solFormat3(Zh,Rots,Coor,[],Sol).
 
-%[[o,o,x,o,o],[o,x,x,x,o],[x,x,x,x,x],[o,x,o,x,o]]
-%[a,[[x],[x]]]
-%[b,[[o,x,o],[x,x,x],[o,x,o]]]
-%[c,[[x,o],[x,x],[x,o]]]
 
+
+
+
+%-------------------------------------------------------------------------------
+%----------------CORRIDAS-------------------------------------------------------
+%TEST DE REPETIDAS
+
+%figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[x,x,x,x]]],[b,[[x,x,x,x]]],[c,[[x,x,x,x]]]],Sol).
+%figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[x],[x],[x],[x]]],[b,[[x,x,x,x]]],[c,[[x,x,x,x]]]],Sol).
+
+%debe  de dar falso
+
+%TEST DE MOVIMIENTO,ROTACION Y ENCONTRAR UNA PIEZA
+
+%toZERO([o,o,x,o,o],[o,x,x,x,o],[x,x,x,x,x],[o,x,o,x,o]],[[x,x,x,x]],1,3,M).
+
+%TEST DE SOLUCION DE CASOS
+
+
+%[[x,x,x,x,x,x,x,x,x,x,x,x],[o,o,x,x,o,x,x,o,x,x,o,o],[x,x,x,x,o,x,x,o,x,x,x,x],[x,o,o,x,o,x,x,o,x,x,o,x],[x,x,x,x,x,x,x,x,x,x,x,x]]
+
+%[[a,[[x,x,x],[x,o,o],[x,o,x],[x,o,o],[x,o,o],[x,x,x]]],[b,[[x,x,x],[x,o,x],[x,o,x],[x,o,x],[x,x,x]]],[c,[[x,x,x],[x,o,x],[x,x,x]]],[e,[[x,o,x],[x,x,x]]],[f,[[x,x,x],[x,o,o],[x,x,x],[x,o,x],[x,x,x]]]]
+
+%figures([[x,x,x,x,x,x,x,x,x,x,x,x],[o,o,x,x,o,x,x,o,x,x,o,o],[x,x,x,x,o,x,x,o,x,x,x,x],[x,o,o,x,o,x,x,o,x,x,o,x],[x,x,x,x,x,x,x,x,x,x,x,x]],[[a,[[x,x,x],[x,o,o],[x,o,x],[x,o,o],[x,o,o],[x,x,x]]],[b,[[x,x,x],[x,o,x],[x,o,x],[x,o,x],[x,x,x]]],[c,[[x,x,x],[x,o,x],[x,x,x]]],[e,[[x,o,x],[x,x,x]]],[f,[[x,x,x],[x,o,o],[x,x,x],[x,o,x],[x,x,x]]]],Sol)
+%figures([[x,x,x,x],[x,x,x,x],[x,x,x,x]],[[a,[[o,x,x,x],[o,o,o,x],[o,x,x,x]]],[b,[[x,o,o,o],[x,x,x,o],[x,o,o,o]]]],Sol).
+%figures([[x,x,x,o],[x,x,x,x],[x,x,x,o]],[[a,[[x,o,x],[x,x,x]]],[b,[[o,x,o],[x,x,x],[o,x,o]]]],Sol).
 %figures([[o,o,x,o,o],[o,x,x,x,o],[x,x,x,x,x],[o,x,o,x,o]],[[a,[[x],[x]]],[b,[[o,x,o],[x,x,x],[o,x,o]]],[c,[[x,o],[x,x],[x,o]]]],Sol).
